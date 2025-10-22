@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
     const { name, username, email, password } = req.body;
 
     if (
-      [fullName, email, username, password].some(
+      [name, email, username, password].some(
         (values) => values?.trim() === ""
       )
     ) {
@@ -58,13 +58,14 @@ const signUp = async (req, res) => {
                 name: user.name,
                 username: user.username,
                 email: user.email, 
+                password: user.password,
             },
             token: genToken,
         },
     }); 
 
   } catch (error) {
-    throw new apiError(500, "User SignUp : Something went wrong");
+    throw new apiError(500, `User SignUp : Something went wrong ${error}`);
   }
 };
 
@@ -76,7 +77,7 @@ const signIn = async (req, res) => {
     const {  username, password } = req.body;
 
     if (
-      [fullName, email, username, password].some(
+      [username, password].some(
         (values) => values?.trim() === ""
       )
     ) {
@@ -101,7 +102,7 @@ const signIn = async (req, res) => {
     
     
 
-    const genToken = await webToken(user._id);
+    const genToken = await webToken(existedUser._id);
 
     res.cookie("token", genToken, {
         httpOnly: true,
