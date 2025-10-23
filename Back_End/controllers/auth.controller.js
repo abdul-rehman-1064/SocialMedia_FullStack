@@ -175,7 +175,7 @@ const sendEmailOTP = async (req, res) => {
     });
 
   } catch (error) {
-    throw new apiError(500, "Send Email OTP : Something went wrong");
+    throw new apiError(500, `Send Email OTP : Something went wrong ${error}`);
   }
 };
 
@@ -183,15 +183,32 @@ const verifiedOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
     const user = await User.findOne({ email });
-    if (!user) {
-      throw new apiError(404, "User with this email does not exist");
-    }
-    if (user.resetOtp !== otp) {
+
+   
+    if (!user || !user.resetOtp || !user.otpExpiry) {
+       throw new apiError(400, "OTP required or already expired. Please re-send OTP.");
+  }
+    
+     if (user.resetOtp !== otp) {
       throw new apiError(400, "Invalid OTP");
     }
-    if (user.otpExpiry < Date.now()) {
-      throw new apiError(400, "OTP has expired");
-    }
+    
+   if (user.otpExpiry < Date.now()) { 
+     throw new apiError(400, "OTP has expired");
+   }
+
+    const storedOtpValue = user.resetOtp ? user.resetOtp.trim() : null; 
+    console.log(storedOtpValue);
+    
+    const inputOtpValue = otp ? otp.trim() : null; 
+    console.log("input " , inputOtpValue);  
+    
+
+   if (storedOtpValue !== inputOtpValue) {
+    throw new apiError(400, "Invalid OTP"); 
+   }
+   
+
     user.isOtpVerified = true;
     user.resetOtp = undefined;
     user.otpExpiry = undefined;
@@ -202,7 +219,15 @@ const verifiedOTP = async (req, res) => {
     });
   }
   catch (error) {
-    throw new apiError(500, "Verify OTP : Something went wrong");
+    
+    if (error instanceof apiError) {
+        throw error; // Throw 400/404 errors with the specific message
+    }
+    // Log unexpected errors
+    console.error("VERIFY OTP UNEXPECTED ERROR:", error);
+    throw new apiError(500, `Verify OTP : Internal Server Error.`);
+    
+    
   }
 };
 
@@ -226,7 +251,7 @@ const passwordReset = async (req, res) => {
       message: "Password reset successfully",
     });
   } catch (error) {
-    throw new apiError(500, "Password Reset : Something went wrong");
+    throw new apiError(500, `Password Reset : Something went wrong  ${error}`);
   }
 };
 

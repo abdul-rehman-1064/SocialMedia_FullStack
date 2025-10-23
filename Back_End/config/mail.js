@@ -14,9 +14,9 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOTP = async (sendTo,otp)=>{
-    transporter.sendMail({
-        from:process.env.EMAIL,
-        sendTo,
+     await transporter.sendMail({
+        from:`${process.env.EMAIL}`,
+        to: sendTo,
         subject:"Your Password Reset OTP",
         html:`<p>Your OTP for password reset is <b>${otp}</b>. It is valid for 5 minutes only.</p>`
 
