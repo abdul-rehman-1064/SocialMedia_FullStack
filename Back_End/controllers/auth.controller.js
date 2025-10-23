@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import webToken from "../config/jsonwebtoken.js";
 import { apiError } from "../config/apiError.js";
+import sendOTP from "../config/mail.js";
 
 
 const signUp = async (req, res) => {
@@ -149,4 +150,84 @@ const signOut = async (req, res) => {
     }
 }
 
-export { signUp , signIn , signOut };
+
+const sendEmailOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new apiError(404, "User with this email does not exist");
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    user.resetOtp = otp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000; 
+    user.isOtpVerified = false;
+
+    await user.save();
+
+    await sendOTP(email, otp);
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP sent to your email successfully",
+    });
+
+  } catch (error) {
+    throw new apiError(500, "Send Email OTP : Something went wrong");
+  }
+};
+
+const verifiedOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new apiError(404, "User with this email does not exist");
+    }
+    if (user.resetOtp !== otp) {
+      throw new apiError(400, "Invalid OTP");
+    }
+    if (user.otpExpiry < Date.now()) {
+      throw new apiError(400, "OTP has expired");
+    }
+    user.isOtpVerified = true;
+    user.resetOtp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+    });
+  }
+  catch (error) {
+    throw new apiError(500, "Verify OTP : Something went wrong");
+  }
+};
+
+
+const passwordReset = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new apiError(404, "User with this email does not exist");
+    }
+    if (!user.isOtpVerified) {
+      throw new apiError(400, "OTP not verified");
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.isOtpVerified = false;
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    throw new apiError(500, "Password Reset : Something went wrong");
+  }
+};
+
+export { signUp , signIn , signOut , sendEmailOTP , verifiedOTP , passwordReset };
