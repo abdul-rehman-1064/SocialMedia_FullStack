@@ -66,7 +66,7 @@ const signUp = async (req, res) => {
     }); 
 
   } catch (error) {
-    throw new apiError(500, `User SignUp : Something went wrong ${error}`);
+    throw new apiError(500, `| ${error}`);
   }
 };
 
@@ -128,7 +128,7 @@ const signIn = async (req, res) => {
     }); 
 
   } catch (error) {
-    throw new apiError(500, "User SignUp : Something went wrong");
+    throw new apiError(500, `| ${error}`);
   }
 };
 
@@ -146,7 +146,7 @@ const signOut = async (req, res) => {
         message: "User signed out successfully",
     });
     } catch (error) {
-        throw new apiError(500, "User SignOut : Something went wrong"); 
+        throw new apiError(500, `| ${error} `); 
     }
 }
 
@@ -175,7 +175,7 @@ const sendEmailOTP = async (req, res) => {
     });
 
   } catch (error) {
-    throw new apiError(500, `Send Email OTP : Something went wrong ${error}`);
+    throw new apiError(500, `| ${error}`);
   }
 };
 
