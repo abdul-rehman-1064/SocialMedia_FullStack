@@ -1,3 +1,4 @@
+import { apiError } from "../config/apiError.js";
 import User from "../models/user.model.js";
 
 const getCurrentUser = async (req, res) => {
@@ -20,4 +21,16 @@ const getCurrentUser = async (req, res) => {
     }   
 };
 
-export {getCurrentUser};
+const suggestedUsers = async (req,res) =>{
+    try {
+        const users = await User.find({
+            _id: { $ne: req.userId }
+        }).select("-password")
+        res.status(200).json({success:true, data:users});
+
+    } catch (error) {
+        throw new apiError (500, `Server Error! suggested Users Error ${error}`);
+    }
+}
+
+export {getCurrentUser ,  suggestedUsers};

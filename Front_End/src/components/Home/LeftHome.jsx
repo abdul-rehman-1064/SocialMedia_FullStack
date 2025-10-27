@@ -6,9 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import {serverURL} from "../../App"
 import { setUserData } from "../../store/authSlice";
+import UsersCard from "../UsersCard";
 
 function LeftHome() {
-  const { userData } = useSelector((state) => state.auth);
+  const { userData , suggestedUsers } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const logout = async()=>{
@@ -31,7 +32,7 @@ function LeftHome() {
         </div>
       </div>
 
-      <div className="flex items-center w-full justify-between gap-[10px]">
+      <div className="flex items-center w-full justify-between gap-[10px] border-b-2 border-gray-900 p-[20px]">
         <div className="w-[70px] h-[70px] border-2 border-black rounded-full cursor-pointer overflow-hidden">
           <img
             src={userData?.profileImage || user}
@@ -46,8 +47,15 @@ function LeftHome() {
             {userData?.data?.user.name}
           </div>
           </div>
-          <div className=" mr-6 text-blue-400 cursor-pointer" onClick={logout}>Logout</div>
+          <button className=" mr-6 text-blue-400 cursor-pointer" onClick={logout}>Logout</button>
         </div>
+      </div>
+
+      <div className="w-full flex flex-col gap-[20px] p-[20px]">
+        <h1 className="text-white text-center text-xl">Suggested Users</h1>
+        {suggestedUsers && suggestedUsers.data.slice(0,3).map((client,index)=>(
+          <UsersCard key={index} client={client}/>
+        ))}
       </div>
     </div>
   );

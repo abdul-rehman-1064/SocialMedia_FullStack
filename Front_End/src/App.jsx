@@ -6,6 +6,7 @@ import ForgotPassword from './pages/ForgotPassword.jsx'
 import Home from './pages/Home.jsx'
 import { useSelector } from 'react-redux'
 import GetCurrentUser from './hooks/GetCurrentUser.jsx'
+import GetSuggestedUsers from './hooks/GetSuggestedUsers.jsx'
 
 
 export const serverURL = "http://localhost:8000"
@@ -13,6 +14,7 @@ export const serverURL = "http://localhost:8000"
 
 function App() {
   GetCurrentUser()
+  GetSuggestedUsers()
   const {userData} = useSelector(state => state.auth);
   return (
     <Routes>
