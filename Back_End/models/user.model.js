@@ -21,7 +21,12 @@ const userSchema = new mongoose.Schema({
     },
     profileImage:{
         type: String,
-
+    },
+    bio:{
+        type: String,
+    },
+    profession:{
+        type: String,
     },
     followers:[{
         type: mongoose.Schema.Types.ObjectId,
