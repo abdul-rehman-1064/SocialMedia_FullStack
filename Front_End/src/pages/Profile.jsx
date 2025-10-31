@@ -86,7 +86,7 @@ function Profile() {
       <div className="w-full h-[100px] flex items-center justify-center gap-[40px] md:gap-[60px] px-[20%] pt-[30px] text-white">
         <div className=" flex flex-col items-center">
           <div className="text-[22px] md:text-[25px] font-semibold">
-            {profileData?.post.length}
+            {profileData?.post?.length}
           </div>
           <div className="text-[18px]  text-[#ffffffc7]">Posts</div>
         </div>

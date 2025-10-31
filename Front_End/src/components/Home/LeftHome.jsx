@@ -11,11 +11,11 @@ import UsersCard from "../UsersCard";
 function LeftHome() {
   const { userData , suggestedUsers } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  
 
   const logout = async()=>{
     try {
         const response = axios.get(`${serverURL}/api/auth/signout`,{withCredentials:true});
-        console.log("logout response : ",response);
         dispatch(setUserData(null))
     } catch (error) {
         console.log("logout Error : ",error);
@@ -35,7 +35,7 @@ function LeftHome() {
       <div className="flex items-center w-full justify-between gap-[10px] border-b-2 border-gray-900 p-[20px]">
         <div className="w-[70px] h-[70px] border-2 border-black rounded-full cursor-pointer overflow-hidden">
           <img
-            src={userData?.profileImage || user}
+            src={userData?.data?.user?.profileImage || user}
             alt=""
             className="w-full object-cover"
           />
