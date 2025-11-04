@@ -5,6 +5,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import authRouter from './routes/auth.route.js';
 import userRouter from './routes/user.route.js';
+import postRouter from './routes/post.route.js';
+import reelRouter from './routes/reels.route.js';
+import storyRouter from './routes/story.route.js';
 
 dotenv.config();
 const app = express();
@@ -20,13 +23,14 @@ app.use(cookieParser());
 
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
+app.use("/api/post",postRouter)
+app.use("/api/reel",reelRouter)
+app.use("/api/story",storyRouter)
 
 app.use((err, req, res, next) => {
-    // Check karein ki error mein status code hai ya nahi
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    // Ab server proper JSON error response bhejega
     return res.status(statusCode).json({
         success: false,
         statusCode,

@@ -18,10 +18,15 @@ const reelsSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
-        comments:[{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Comment"
-        }]
+        comments: [
+              {
+                author: {
+                  type: mongoose.Schema.Types.ObjectId,
+                  ref: "User",
+                },
+                message: { type: String },
+              },
+            ],
 },{ timestamps: true});
 
 const Reels = mongoose.model("Reels" , reelsSchema);
